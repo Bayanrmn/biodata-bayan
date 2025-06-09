@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #38497d;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background: rgb(247, 247, 249);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(9, 38, 131, 0.918);
+      width: 300px;
+    }
+
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 15px;
+      background: #4324cd;
+      color: white;
+      border: none;
+      margin-top: 25px;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+
+    .login-btn:hover {
+      background: #4324cd;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login</h2> 
+      <div class="form-group">
+        <label for="username">Email/Nomor Telepon</label>
+        <input type="text" id="username" name="username"/>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password"/>
+      </div>
+      <button type="button" class="login-btn">Login</button>
+    </form>
+  </div>
+</body>
+</html>
