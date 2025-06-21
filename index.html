@@ -1,51 +1,824 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Biodata Bayan Ruhman</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Diagnosa Penyakit - Slide Animasi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --covid: #e63946;
+            --flu: #457b9d;
+            --allergy: #2a9d8f;
+            --uncertain: #f4a261;
+            --light: #f1faee;
+            --dark: #1d3557;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--dark), #457b9d);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--covid), var(--flu), var(--allergy));
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 1rem;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: white;
+        }
+        
+        .slider-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            width: 500%;
+        }
+        
+        .slide {
+            width: 20%;
+            padding: 2rem;
+            flex-shrink: 0;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        h1 {
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+        
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            right: 25%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--covid), var(--flu), var(--allergy));
+            border-radius: 3px;
+        }
+        
+        .question-card {
+            background: #fff;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+        
+        .question-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.2rem;
+            color: var(--dark);
+        }
+        
+        .question-title i {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+        
+        .option {
+            background: var(--light);
+            padding: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+            border: 2px solid #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #adb5bd;
+            transition: background 0.3s;
+        }
+        
+        .option:hover {
+            border-color: var(--dark);
+        }
+        
+        .option:hover::before {
+            background: var(--dark);
+        }
+        
+        .option.selected {
+            background: white;
+            border-color: var(--dark);
+            box-shadow: 0 0 0 2px var(--dark);
+        }
+        
+        .option.selected::before {
+            background: var(--dark);
+        }
+        
+        .option i {
+            font-size: 1.5rem;
+            color: var(--dark);
+            transition: color 0.3s;
+        }
+        
+        .option.selected i {
+            color: var(--dark);
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--covid), var(--flu), var(--allergy));
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .result-container {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-title {
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .disease-card {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .disease-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .disease-icon {
+            font-size: 2.5rem;
+            min-width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .covid { background: var(--covid); }
+        .flu { background: var(--flu); }
+        .allergy { background: var(--allergy); }
+        .uncertain { background: var(--uncertain); }
+        
+        .disease-info {
+            flex-grow: 1;
+        }
+        
+        .disease-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-percent {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .progress-bar-result {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 1s ease-out;
+        }
+        
+        .progress-covid { background: var(--covid); }
+        .progress-flu { background: var(--flu); }
+        .progress-allergy { background: var(--allergy); }
+        .progress-uncertain { background: var(--uncertain); }
+        
+        .diagnosis-advice {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            border-left: 4px solid var(--dark);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .advice-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .advice-title i {
+            font-size: 1.3rem;
+        }
+        
+        .btn {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: block;
+            margin: 2.5rem auto;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .btn:hover {
+            background: #14213d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .reset-btn {
+            background: white;
+            color: var(--dark);
+            border: 2px solid var(--dark);
+            padding: 0.8rem 1.5rem;
+            margin: 2rem auto 0;
+        }
+        
+        .reset-btn:hover {
+            background: var(--light);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--dark);
+            color: white;
+            margin-top: 3rem;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                margin: 1rem;
+            }
+            
+            .disease-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
-<body style="margin:0; font-family: Arial, sans-serif; background-color:#c0d4ff; color:#000000;">
-
-  <div style="max-width:700px; margin:40px auto; background:#d2e0ff; padding:30px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1);">
-
-    <div style="text-align:center;">
-      <img src="WhatsApp Image 2025-06-08 at 21.50.44_10e74086.jpg" alt="Foto Bayan Ruhman" style="width:150px; height:150px; border-radius:100px; object-fit:cover; margin-bottom:20px;">
-      <h1 style="margin:10px 0;">Bayan Ruhman</h1>
-      <p style="color:#212121;"><strong> Sistem Informasi</strong></p>
-        <p style="color:#212121;"><strong>2309010178</strong></p>
+<body>
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-laptop-medical"></i>
+            <div>
+                <h1>Sistem Diagnosa Penyakit</h1>
+                <p>Menggunakan Metode Dempster-Shafer</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="slider-container">
+            <div class="slider" id="slider">
+                <!-- Slide 1 -->
+                <div class="slide">
+                    <h1><i class="fas fa-thermometer-three-quarters"></i> Kondisi Demam</h1>
+                    <div class="question-card">
+                        <div class="question-title">
+                            <i class="fas fa-thermometer-three-quarters"></i>
+                            <h2>Bagaimana kondisi demam Anda?</h2>
+                        </div>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 'demam-tinggi')">
+                                <i class="fas fa-fire"></i>
+                                <div>
+                                    <h3>Demam Tinggi</h3>
+                                    <p>Suhu >38°C, badan menggigil</p>
+                                </div>
+                            </div>
+                            <div class="option" onclick="selectOption(this, 'demam-ringan')">
+                                <i class="fas fa-temperature-low"></i>
+                                <div>
+                                    <h3>Demam Ringan</h3>
+                                    <p>Suhu 37-38°C</p>
+                                </div>
+                            </div>
+                            <div class="option" onclick="selectOption(this, 'tidak-demam')">
+                                <i class="fas fa-temperature-empty"></i>
+                                <div>
+                                    <h3>Tidak Demam</h3>
+                                    <p>Suhu normal (<37°C)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 2 -->
+                <div class="slide">
+                    <h1><i class="fas fa-lungs"></i> Gangguan Pernapasan</h1>
+                    <div class="question-card">
+                        <div class="question-title">
+                            <i class="fas fa-lungs"></i>
+                            <h2>Apakah Anda mengalami gangguan pernapasan?</h2>
+                        </div>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 'sesak-parah')">
+                                <i class="fas fa-procedures"></i>
+                                <div>
+                                    <h3>Sesak Napas Parah</h3>
+                                    <p>Sulit bernapas, butuh bantuan oksigen</p>
+                                </div>
+                            </div>
+                            <div class="option" onclick="selectOption(this, 'sesak-ringan')">
+                                <i class="fas fa-wind"></i>
+                                <div>
+                                    <h3>Sesak Ringan</h3>
+                                    <p>Napas terasa berat tapi masih bisa bernapas</p>
+                                </div>
+                            </div>
+                            <div class="option" onclick="selectOption(this, 'tidak-sesak')">
+                                <i class="fas fa-laugh-beam"></i>
+                                <div>
+                                    <h3>Tidak Sesak</h3>
+                                    <p>Pernapasan normal</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 3 -->
+                <div class="slide">
+                    <h1><i class="fas fa-smile"></i> Indra Pengecap/Penciuman</h1>
+                    <div class="question-card">
+                        <div class="question-title">
+                            <i class="fas fa-smile"></i>
+                            <h2>Bagaimana indra penciuman/pengecap Anda?</h2>
+                        </div>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 'hilang-total')">
+                                <i class="fas fa-ban"></i>
+                                <div>
+                                    <h3>Hilang Total</h3>
+                                    <p>Tidak bisa mencium/merasakan apapun</p>
+                                </div>
+                            </div>
+                            <div class="option" onclick="selectOption(this, 'hilang-sebagian')">
+                                <i class="fas fa-minus-circle"></i>
+                                <div>
+                                    <h3>Hilang Sebagian</h3>
+                                    <p>Bisa mencium/merasakan tapi tidak jelas</p>
+                                </div>
+                            </div>
+                            <div class="option" onclick="selectOption(this, 'tidak-hilang')">
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <h3>Normal</h3>
+                                    <p>Fungsi penciuman/pengecap normal</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 4 -->
+                <div class="slide">
+                    <h1><i class="fas fa-head-side-cough"></i> Gejala Batuk</h1>
+                    <div class="question-card">
+                        <div class="question-title">
+                            <i class="fas fa-head-side-cough"></i>
+                            <h2>Apakah Anda mengalami batuk?</h2>
+                        </div>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 'batuk-kering')">
+                                <i class="fas fa-water"></i>
+                                <div>
+                                    <h3>Batuk Kering</h3>
+                                    <p>Tidak berdahak, tenggorokan gatal</p>
+                                </div>
+                            </div>
+                            <div class="option" onclick="selectOption(this, 'batuk-berdahak')">
+                                <i class="fas fa-cloud-rain"></i>
+                                <div>
+                                    <h3>Batuk Berdahak</h3>
+                                    <p>Mengeluarkan lendir</p>
+                                </div>
+                            </div>
+                            <div class="option" onclick="selectOption(this, 'tidak-batuk')">
+                                <i class="fas fa-times"></i>
+                                <div>
+                                    <h3>Tidak Batuk</h3>
+                                    <p>Tidak ada gejala batuk</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 5 - Hasil -->
+                <div class="slide">
+                    <div class="result-container">
+                        <div class="result-title">
+                            <i class="fas fa-clipboard-check"></i>
+                            <h1>Hasil Diagnosa</h1>
+                        </div>
+                        
+                        <div class="disease-card">
+                            <div class="disease-icon covid">
+                                <i class="fas fa-virus"></i>
+                            </div>
+                            <div class="disease-info">
+                                <div class="disease-name">COVID-19</div>
+                                <div class="progress-container">
+                                    <div class="progress-text">
+                                        <span>Kemungkinan</span>
+                                        <span class="progress-percent" id="covidPercent">0%</span>
+                                    </div>
+                                    <div class="progress-bar-result">
+                                        <div class="progress progress-covid" id="covidProgress"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="disease-card">
+                            <div class="disease-icon flu">
+                                <i class="fas fa-head-side-cough"></i>
+                            </div>
+                            <div class="disease-info">
+                                <div class="disease-name">Flu Biasa</div>
+                                <div class="progress-container">
+                                    <div class="progress-text">
+                                        <span>Kemungkinan</span>
+                                        <span class="progress-percent" id="fluPercent">0%</span>
+                                    </div>
+                                    <div class="progress-bar-result">
+                                        <div class="progress progress-flu" id="fluProgress"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="disease-card">
+                            <div class="disease-icon allergy">
+                                <i class="fas fa-pollen"></i>
+                            </div>
+                            <div class="disease-info">
+                                <div class="disease-name">Alergi</div>
+                                <div class="progress-container">
+                                    <div class="progress-text">
+                                        <span>Kemungkinan</span>
+                                        <span class="progress-percent" id="allergyPercent">0%</span>
+                                    </div>
+                                    <div class="progress-bar-result">
+                                        <div class="progress progress-allergy" id="allergyProgress"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="diagnosis-advice">
+                            <div class="advice-title">
+                                <i class="fas fa-comment-medical"></i>
+                                <h3>Saran Medis</h3>
+                            </div>
+                            <p id="diagnosisAdvice">Silakan lengkapi pemeriksaan gejala untuk mendapatkan saran medis.</p>
+                        </div>
+                        
+                        <button class="btn reset-btn" onclick="resetForm()">
+                            <i class="fas fa-redo"></i> Pemeriksaan Baru
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Sistem Diagnosa Penyakit Menggunakan Teori Dempster-Shafer &copy; 2023</p>
+        <p>Tugas Mata Kuliah Sistem Cerdas</p>
     </div>
 
-    <hr style="margin:30px 0; border:none; border-top:1px solid #01085e;">
-
-    <div style="line-height:1.8;">
-      <p><strong>Tanggal Lahir:</strong> 16 Maret 2005</p>
-      <p><strong>Alamat:</strong> Jl. Padangsidempuan No.12</p>
-      <p><strong>Email:</strong> ruhmanbayan@gmail.com</p>
-      <p><strong>No. HP:</strong> 085270585647</p>
-      <p><strong>Pendidikan:</strong> Sedang Menempuh S1</p>
-    </div>
-
-    <hr style="margin:30px 0; border:none; border-top:1px solid #01085e;">
-
-    <div>
-      <h2 style="margin-bottom:10px;">Tentang Saya</h2>
-      <p style="color:#212121;">Saya adalah seorang mahasiswa yang berkuliah di Universitas Muhammadiyah Sumatera Utara (UMSU) angakatan 2023. 
-        Saya mahasiswa Sistem Informasi yang mempunyai keinginan dan ketertarikan untuk belajar dibidang Website Creator, Cyber Security, Database,
-        dan Animasi (Blender).</p>
-    </div>
-
-    <hr style="margin:30px 0; border:none; border-top:1px solid #01085e;">
-
-    <div style="margin-top:30px;">
-      <h2 style="margin-bottom:10px;">Keahlian</h2>
-      <ul style="list-style:none; padding:0; color:#3e3e3e;">
-        <li style="margin-bottom: 5px;"> - Blender</li> 
-        <li style="margin-bottom: 5px;"> - PhpMyAdmin</li>
-        <li style="margin-bottom: 5px;"> - Statistika</li>
-      </ul>
-    </div>
-
-  </div>
-
+    <script>
+        // Data Basic Probability Assignment (m) untuk setiap gejala
+        const symptomData = {
+            // Format: { covid, flu, allergy, uncertain }
+            'demam-tinggi': { covid: 0.7, flu: 0.2, allergy: 0.0, uncertain: 0.1 },
+            'demam-ringan': { covid: 0.4, flu: 0.5, allergy: 0.0, uncertain: 0.1 },
+            'tidak-demam': { covid: 0.1, flu: 0.1, allergy: 0.6, uncertain: 0.2 },
+            'sesak-parah': { covid: 0.8, flu: 0.1, allergy: 0.0, uncertain: 0.1 },
+            'sesak-ringan': { covid: 0.5, flu: 0.3, allergy: 0.1, uncertain: 0.1 },
+            'tidak-sesak': { covid: 0.1, flu: 0.2, allergy: 0.5, uncertain: 0.2 },
+            'hilang-total': { covid: 0.9, flu: 0.0, allergy: 0.0, uncertain: 0.1 },
+            'hilang-sebagian': { covid: 0.6, flu: 0.1, allergy: 0.0, uncertain: 0.3 },
+            'tidak-hilang': { covid: 0.1, flu: 0.2, allergy: 0.5, uncertain: 0.2 },
+            'batuk-kering': { covid: 0.6, flu: 0.3, allergy: 0.0, uncertain: 0.1 },
+            'batuk-berdahak': { covid: 0.2, flu: 0.7, allergy: 0.0, uncertain: 0.1 },
+            'tidak-batuk': { covid: 0.1, flu: 0.1, allergy: 0.6, uncertain: 0.2 }
+        };
+        
+        let currentSlide = 0;
+        const totalSlides = 4; // Jumlah slide pertanyaan
+        let selectedSymptoms = [];
+        const slider = document.getElementById('slider');
+        const progressBar = document.getElementById('progressBar');
+        
+        // Inisialisasi slider
+        function initSlider() {
+            updateProgressBar();
+        }
+        
+        // Update progress bar
+        function updateProgressBar() {
+            const progress = ((currentSlide) / totalSlides) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+        
+        // Pindah ke slide berikutnya
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                slider.style.transform = `translateX(-${currentSlide * 20}%)`;
+                updateProgressBar();
+                
+                // Jika sudah di slide terakhir, hitung diagnosa
+                if (currentSlide === totalSlides) {
+                    calculateDiagnosis();
+                }
+            }
+        }
+        
+        // Pilih opsi jawaban
+        function selectOption(element, symptomId) {
+            // Hapus seleksi sebelumnya di slide ini
+            const parent = element.parentElement;
+            const options = parent.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Tandai yang dipilih
+            element.classList.add('selected');
+            
+            // Simpan gejala yang dipilih
+            selectedSymptoms[currentSlide] = symptomId;
+            
+            // Otomatis lanjut ke slide berikutnya setelah 500ms
+            setTimeout(nextSlide, 500);
+        }
+        
+        // Fungsi kombinasi bukti Dempster-Shafer
+        function combineEvidence(m1, m2) {
+            // Hitung konflik (K)
+            let K = 0;
+            const diseases = ['covid', 'flu', 'allergy'];
+            
+            diseases.forEach(d1 => {
+                diseases.forEach(d2 => {
+                    if (d1 !== d2) {
+                        K += m1[d1] * m2[d2];
+                    }
+                });
+            });
+            
+            // Hitung kombinasi untuk setiap penyakit
+            const combined = { uncertain: 0 };
+            diseases.forEach(disease => {
+                combined[disease] = (m1[disease] * m2[disease] + 
+                                    m1[disease] * m2.uncertain + 
+                                    m1.uncertain * m2[disease]) / (1 - K);
+            });
+            
+            // Hitung uncertain
+            combined.uncertain = (m1.uncertain * m2.uncertain) / (1 - K);
+            
+            return combined;
+        }
+        
+        function calculateDiagnosis() {
+            // Pastikan semua gejala terisi
+            if (selectedSymptoms.length < totalSlides) {
+                alert('Silakan lengkapi semua pertanyaan!');
+                return;
+            }
+            
+            // Dapatkan BPA untuk gejala yang dipilih
+            const m1 = symptomData[selectedSymptoms[0]];
+            const m2 = symptomData[selectedSymptoms[1]];
+            const m3 = symptomData[selectedSymptoms[2]];
+            const m4 = symptomData[selectedSymptoms[3]];
+            
+            // Kombinasikan bukti secara bertahap
+            const combined12 = combineEvidence(m1, m2);
+            const combined123 = combineEvidence(combined12, m3);
+            const finalCombined = combineEvidence(combined123, m4);
+            
+            // Tampilkan hasil
+            displayResults(finalCombined);
+        }
+        
+        function displayResults(results) {
+            // Update progress bars
+            updateProgress('covid', results.covid);
+            updateProgress('flu', results.flu);
+            updateProgress('allergy', results.allergy);
+            
+            // Berikan saran diagnosa
+            const adviceElement = document.getElementById('diagnosisAdvice');
+            
+            if (results.covid >= 0.7) {
+                adviceElement.innerHTML = `
+                    <strong>Kemungkinan COVID-19 tinggi (${Math.round(results.covid * 100)}%).</strong><br>
+                    - Segera lakukan tes PCR<br>
+                    - Isolasi mandiri selama minimal 5 hari<br>
+                    - Pantau saturasi oksigen secara berkala<br>
+                    - Hubungi dokter jika sesak memburuk
+                `;
+            } else if (results.flu >= 0.6) {
+                adviceElement.innerHTML = `
+                    <strong>Kemungkinan Flu Biasa (${Math.round(results.flu * 100)}%).</strong><br>
+                    - Istirahat yang cukup<br>
+                    - Minum air putih lebih banyak<br>
+                    - Konsumsi obat flu jika perlu<br>
+                    - Gunakan masker untuk mencegah penularan
+                `;
+            } else if (results.allergy >= 0.6) {
+                adviceElement.innerHTML = `
+                    <strong>Kemungkinan Alergi (${Math.round(results.allergy * 100)}%).</strong><br>
+                    - Hindari alergen yang dicurigai<br>
+                    - Konsumsi antihistamin jika diperlukan<br>
+                    - Gunakan masker saat beraktivitas di luar<br>
+                    - Konsultasi ke dokter jika gejala menetap
+                `;
+            } else {
+                adviceElement.innerHTML = `
+                    <strong>Diagnosa tidak pasti.</strong><br>
+                    Gejala yang Anda alami tidak spesifik untuk satu penyakit tertentu.<br>
+                    Disarankan untuk:<br>
+                    - Memantau perkembangan gejala<br>
+                    - Konsultasi ke dokter untuk pemeriksaan lebih lanjut<br>
+                    - Melakukan tes kesehatan jika gejala memburuk
+                `;
+            }
+        }
+        
+        function updateProgress(disease, value) {
+            const percent = Math.round(value * 100);
+            document.getElementById(`${disease}Percent`).textContent = `${percent}%`;
+            document.getElementById(`${disease}Progress`).style.width = `${percent}%`;
+        }
+        
+        function resetForm() {
+            // Reset slider
+            currentSlide = 0;
+            slider.style.transform = 'translateX(0)';
+            
+            // Reset seleksi
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Reset array gejala
+            selectedSymptoms = [];
+            
+            // Reset progress bars
+            updateProgress('covid', 0);
+            updateProgress('flu', 0);
+            updateProgress('allergy', 0);
+            updateProgressBar();
+            
+            // Reset saran
+            document.getElementById('diagnosisAdvice').textContent = 'Silakan lengkapi pemeriksaan gejala untuk mendapatkan saran medis.';
+        }
+        
+        // Inisialisasi saat halaman dimuat
+        window.onload = initSlider;
+    </script>
 </body>
 </html>
